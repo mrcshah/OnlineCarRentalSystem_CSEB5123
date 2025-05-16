@@ -23,11 +23,11 @@ Route::get('/home', function () {
 })->middleware('auth');
 
 Route::middleware(['auth'])->group(function (){
-    Route::get('/dashboard/customer', [CustomerController::class, 'dashboard'])
+    Route::get('/dashboard/customer', [CustomerController::class, 'index'])
     ->name('customer.dashboard')
     ->can('view-customer-dashboard');
 
-    Route::get('/dashboard/staff', [StaffController::class, 'dashboard'])
+    Route::get('/dashboard/staff', [StaffController::class, 'index'])
     ->name('dashboard.staff')
     ->can('view-staff-dashboard');
 

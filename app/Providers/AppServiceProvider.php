@@ -20,7 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
 
     Gate::define('is-staff', function ($user) {
         return $user->role === 'staff';

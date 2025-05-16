@@ -48,7 +48,15 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
-                        @else
+                                @else
+                            @auth
+                                @if(auth()->user()->role === 'customer')
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('customer.dashboard') }}">{{ __('Dashboard') }}</a>
+                                    </li>
+                                @endif
+                            @endauth
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
@@ -67,6 +75,7 @@
                                 </div>
                             </li>
                         @endguest
+                        
                     </ul>
                 </div>
             </div>
