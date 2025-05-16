@@ -54,10 +54,22 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('dashboard.customer') }}">{{ __('Dashboard') }}</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('/bookings') }}">My Bookings</a>
+                                    </li>
                                 @endif
                                 @if(auth()->user()->role === 'staff')
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('dashboard.staff') }}">{{ __('Dashboard') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('staff.bookings.index') }}">Review Bookings</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('branches.index') }}">Manage Branches</a>
+                                    </li>
+                                   <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('staff/cars/manage') }}">Manage Cars</a>
                                     </li>
                                 @endif                                
                             @endauth

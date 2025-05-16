@@ -24,7 +24,7 @@ Route::get('/home', function () {
 
 Route::middleware(['auth'])->group(function (){
     Route::get('/dashboard/customer', [CustomerController::class, 'index'])
-    ->name('customer.dashboard')
+    ->name('dashboard.customer')
     ->can('view-customer-dashboard');
 
     Route::get('/dashboard/staff', [StaffController::class, 'index'])
@@ -43,11 +43,18 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/bookings/manage', [BookingController::class, 'manage']);
         Route::post('/bookings/{id}/status', [BookingController::class, 'updateStatus']);
 
-        Route::get('/cars/manage', [CarController::class, 'manage']);
-        Route::post('/cars', [CarController::class, 'store']);
-        Route::put('/cars/{id}', [CarController::class, 'update']);
-        Route::delete('/cars/{id}', [CarController::class, 'destroy']);
+        Route::get('staff/cars/manage', [CarController::class, 'manage']);
+        Route::post('staff/cars', [CarController::class, 'store']);
+        Route::put('staff/cars/{id}', [CarController::class, 'update']);
+        Route::delete('staff/cars/{id}', [CarController::class, 'destroy']);
+        
+        Route::get('/staff/bookings', [StaffController::class, 'reviewBookings'])->name('staff.bookings.index');
+        Route::patch('/staff/bookings/{booking}/approve', [StaffController::class, 'approveBooking'])->name('staff.bookings.approve');
+        Route::patch('/staff/bookings/{booking}/reject', [StaffController::class, 'rejectBooking'])->name('staff.bookings.reject');
 
-        Route::get('/branches', [BranchController::class, 'index']);
+        Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
+        Route::get('/staff/branches/create', [BranchController::class, 'create'])->name('branches.create');
+        Route::post('/staff/branches', [BranchController::class, 'store'])->name('branches.store');
+
     });
 });

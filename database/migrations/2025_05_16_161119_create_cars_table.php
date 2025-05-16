@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('transmission');
             $table->decimal('price_per_day', 8, 2);
+            $table->string('plate_number')->unique();
             $table->boolean('is_available')->default(true);
             $table->timestamps();
         });

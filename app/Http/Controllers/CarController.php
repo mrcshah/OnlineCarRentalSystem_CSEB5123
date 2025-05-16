@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Branch;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -10,9 +11,11 @@ class CarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function manage()
     {
-        //
+        $cars = Car::with('branch')->get(); // get all cars and branch info
+        $branches = Branch::all(); // for dropdown selection
+        return view('staff.cars.manage', compact('cars','branches'));
     }
 
     /**
@@ -28,9 +31,20 @@ class CarController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'transmission' => 'required|in:Automatic,Manual',
+            'plate_number' => 'required|string|max:255|unique:cars,plate_number',
+            'price_per_day' => 'required|numeric|min:0',
+            'branch_id' => 'required|exists:branches,id',
+        ]);
 
+        Car::create($request->all());
+
+        return redirect()->back()->with('success', 'Car added successfully.');
+    }
     /**
      * Display the specified resource.
      */

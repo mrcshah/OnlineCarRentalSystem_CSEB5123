@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Closure;
 use App\Models\Staff;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,5 +67,22 @@ class StaffController extends Controller
     public function destroy(Staff $staff)
     {
         //
+    }
+    public function reviewBookings()
+    {
+        $bookings = Booking::with('user', 'cars')->latest()->get();
+        return view('staff.bookings.index', compact('bookings'));
+    }
+
+    public function approveBooking(Booking $booking)
+    {
+        $booking->update(['status' => 'approved']);
+        return back()->with('success', 'Booking approved successfully.');
+    }
+
+    public function rejectBooking(Booking $booking)
+    {
+        $booking->update(['status' => 'rejected']);
+        return back()->with('success', 'Booking rejected successfully.');
     }
 }
