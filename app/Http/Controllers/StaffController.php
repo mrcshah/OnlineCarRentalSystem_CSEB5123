@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Closure;
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StaffController extends Controller
 {
@@ -12,9 +14,12 @@ class StaffController extends Controller
      */
     public function index()
     {
-        return view('staff.dashboard');
+    if (Auth::user()->role !== 'staff' && Auth::user()->role !== 'admin') {
+        abort(403, 'Unauthorized');
     }
 
+    return view('dashboard.staff');
+    }
     /**
      * Show the form for creating a new resource.
      */

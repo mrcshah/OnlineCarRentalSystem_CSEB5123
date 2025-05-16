@@ -52,9 +52,14 @@
                             @auth
                                 @if(auth()->user()->role === 'customer')
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('customer.dashboard') }}">{{ __('Dashboard') }}</a>
+                                        <a class="nav-link" href="{{ route('dashboard.customer') }}">{{ __('Dashboard') }}</a>
                                     </li>
                                 @endif
+                                @if(auth()->user()->role === 'staff')
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('dashboard.staff') }}">{{ __('Dashboard') }}</a>
+                                    </li>
+                                @endif                                
                             @endauth
 
                             <li class="nav-item dropdown">
