@@ -34,9 +34,10 @@ Route::middleware(['auth'])->group(function (){
     Route::middleware('can:is-customer')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index']);
         Route::get('/bookings/create', [BookingController::class, 'create']);
-        Route::post('/bookings', [BookingController::class, 'store']);
+        Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
         Route::get('/cars', [CarController::class, 'index']);
+        Route::get('/cars/browse', [CarController::class, 'browse'])->name('cars.browse');
     });
 
     Route::middleware('can:is-staff')->group(function () {

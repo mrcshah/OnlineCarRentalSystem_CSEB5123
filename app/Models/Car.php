@@ -18,6 +18,7 @@ class Car extends Model
         'plate_number',
         'price_per_day',
         'is_available',
+        'car_image',
     ];
 
     public function branch()

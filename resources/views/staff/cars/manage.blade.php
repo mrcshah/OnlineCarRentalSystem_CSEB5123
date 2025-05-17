@@ -12,7 +12,7 @@
     <div class="card mb-4">
         <div class="card-header">Add New Car</div>
         <div class="card-body">
-            <form action="{{ url('staff/cars') }}" method="POST">
+            <form action="{{ url('staff/cars') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="mb-3">
@@ -61,6 +61,11 @@
                     </select>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Car Image</label>
+                    <input type="file" name="car_image" class="form-control">
+                </div>
+
                 <button type="submit" class="btn btn-success">Add Car</button>
             </form>
         </div>
@@ -78,6 +83,7 @@
                 <th>Price Per Day (RM)</th>
                 <th>Plate Number</th>
                 <th>Branch</th>
+                <th>Car Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -91,6 +97,13 @@
                 <td>{{ number_format($car->price_per_day, 2) }}</td>
                 <td>{{ $car->plate_number }}</td>
                 <td>{{ $car->branch->name ?? 'N/A' }}</td>
+                <td>
+                    @if($car->car_image)
+                        <img src="{{ asset('storage/' . $car->car_image) }}" alt="Car Image" style="width: 100px; height: auto;">
+                    @else
+                        No Image
+                    @endif
+                </td>
                 <td>
                     <a href="{{ route('cars.edit', $car->id) }}" class="btn btn-sm btn-primary">Edit</a>
                 </td>

@@ -45,7 +45,8 @@ class BookingController extends Controller
             'start_date' => 'required|date|after_or_equal:'.Carbon::now()->addDays(2)->toDateString(),
             'end_date' => 'required|date|after_or_equal:start_date',
             'car_ids' => 'required|array|min:1|max:2',
-            'car_ids.*' => 'exists:cars,id'
+            'car_ids.*' => 'exists:cars,id',
+            'branch_id' => 'required|exists:branches,id'
         ]);
 
         $start = Carbon::parse($request->start_date);
@@ -90,14 +91,23 @@ class BookingController extends Controller
             }
         }
 
+        $days = $start->diffInDays($end);
+        $totalPrice = 0;
+
+        foreach ($carIds as $carId) {
+            $car = Car::find($carId);
+            $totalPrice += $car->price_per_day * $days;
+        }
+
         // Save booking
         $booking = Booking::create([
             'user_id' => Auth::id(),
+            'branch_id' => $request->branch_id,
             'start_date' => $start,
             'end_date' => $end,
-            'status' => 'pending' // or whatever default you want
+            'status' => 'pending',
+            'total_price' => $totalPrice
         ]);
-
         // Attach cars
         $booking->cars()->attach($carIds);
 

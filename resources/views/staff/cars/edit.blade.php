@@ -52,6 +52,20 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Current Image:</label><br>
+            @if($car->car_image)
+                <img src="{{ asset('storage/' . $car->car_image) }}" width="150">
+            @else
+                <p>No image uploaded.</p>
+            @endif
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Change Image</label>
+            <input type="file" name="car_image" class="form-control">
+        </div>
+
         <button class="btn btn-success">Update Car</button>
         <a href="{{ route('cars.manage') }}" class="btn btn-secondary">Back</a>
     </form>
