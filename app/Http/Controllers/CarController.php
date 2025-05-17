@@ -58,7 +58,8 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
-        //
+        $branches = Branch::all();
+        return view('staff.cars.edit', compact('car', 'branches'));
     }
 
     /**
@@ -66,7 +67,19 @@ class CarController extends Controller
      */
     public function update(Request $request, Car $car)
     {
-        //
+        $request->validate([
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'transmission' => 'required|in:Automatic,Manual',
+            'plate_number' => 'required|string|max:255|unique:cars,plate_number,' . $car->id,
+            'price_per_day' => 'required|numeric|min:0',
+            'branch_id' => 'required|exists:branches,id',
+        ]);
+
+        $car->update($request->all());
+
+        return redirect()->route('cars.manage')->with('success', 'Car updated successfully.');
     }
 
     /**
@@ -74,6 +87,7 @@ class CarController extends Controller
      */
     public function destroy(Car $car)
     {
-        //
+        $car->delete();
+        return redirect()->route('cars.manage')->with('success', 'Car deleted successfully.');
     }
 }

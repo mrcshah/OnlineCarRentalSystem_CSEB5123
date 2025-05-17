@@ -43,10 +43,11 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/bookings/manage', [BookingController::class, 'manage']);
         Route::post('/bookings/{id}/status', [BookingController::class, 'updateStatus']);
 
-        Route::get('staff/cars/manage', [CarController::class, 'manage']);
-        Route::post('staff/cars', [CarController::class, 'store']);
-        Route::put('staff/cars/{id}', [CarController::class, 'update']);
-        Route::delete('staff/cars/{id}', [CarController::class, 'destroy']);
+        Route::get('staff/cars/manage', [CarController::class, 'manage'])->name('cars.manage');
+        Route::post('staff/cars', [CarController::class, 'store'])->name('cars.store');
+        Route::get('staff/cars/{id}/edit', [CarController::class, 'edit'])->name('cars.edit');
+        Route::put('staff/cars/{id}', [CarController::class, 'update'])->name('cars.update');
+        Route::delete('staff/cars/{id}', [CarController::class, 'destroy'])->name('cars.destroy');
         
         Route::get('/staff/bookings', [StaffController::class, 'reviewBookings'])->name('staff.bookings.index');
         Route::patch('/staff/bookings/{booking}/approve', [StaffController::class, 'approveBooking'])->name('staff.bookings.approve');
