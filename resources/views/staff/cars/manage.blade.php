@@ -78,6 +78,7 @@
                 <th>Price Per Day (RM)</th>
                 <th>Plate Number</th>
                 <th>Branch</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -90,6 +91,9 @@
                 <td>{{ number_format($car->price_per_day, 2) }}</td>
                 <td>{{ $car->plate_number }}</td>
                 <td>{{ $car->branch->name ?? 'N/A' }}</td>
+                <td>
+                    <a href="{{ route('cars.edit', $car->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                </td>
             </tr>
             @endforeach
         </tbody>
