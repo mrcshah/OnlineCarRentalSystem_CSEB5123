@@ -33,10 +33,13 @@ Route::middleware(['auth'])->group(function (){
 
     Route::middleware('can:is-customer')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index']);
-        Route::get('/bookings/create', [BookingController::class, 'create']);
-        Route::post('/bookings', [BookingController::class, 'store']);
+        Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
+        Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
         Route::get('/cars', [CarController::class, 'index']);
+        Route::get('/cars', [CarController::class, 'browse'])->name('cars.browse');
+        Route::get('/cars/browse', [CarController::class, 'browse'])->name('cars.browse');
+
     });
 
     Route::middleware('can:is-staff')->group(function () {
@@ -56,6 +59,11 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
         Route::get('/staff/branches/create', [BranchController::class, 'create'])->name('branches.create');
         Route::post('/staff/branches', [BranchController::class, 'store'])->name('branches.store');
+        Route::post('/staff/branches/join', [BranchController::class, 'join'])->name('branches.join');
+        Route::post('/staff/branches/{branch}/leave', [BranchController::class, 'leave'])->name('branches.leave');
+        Route::post('/staff/branches/{branch}/kick/{user}', [BranchController::class, 'kick'])->name('branches.kick');
+        Route::delete('/staff/branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
+        Route::get('/staff/branches/{branch}/manage', [BranchController::class, 'manage'])->name('branches.manage');
 
     });
 });

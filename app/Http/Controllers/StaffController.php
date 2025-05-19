@@ -76,12 +76,24 @@ class StaffController extends Controller
 
     public function approveBooking(Booking $booking)
     {
+        $user = Auth::user();
+        $staffBranchId = $user->branches->pluck('id')->toArray();
+
+        if (!in_array($booking->branch_id, $userBranchIds)) {
+            return back()->withErrors(['unauthorized' => 'You can only approve bookings for your own branches.']);
+        }
         $booking->update(['status' => 'approved']);
+        $booking->save();
         return back()->with('success', 'Booking approved successfully.');
     }
 
     public function rejectBooking(Booking $booking)
     {
+        $user = Auth::user();
+        $staffBranchId = $user->branches->pluck('id')->toArray();
+        if (!in_array($booking->branch_id, $userBranchIds)) {
+            return back()->withErrors(['unauthorized' => 'You can only reject bookings for your own branches.']);
+        }
         $booking->update(['status' => 'rejected']);
         return back()->with('success', 'Booking rejected successfully.');
     }

@@ -57,6 +57,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ url('/bookings') }}">My Bookings</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('cars/browse') }}">Browse Cars</a>
+                                    </li>
                                 @endif
                                 @if(auth()->user()->role === 'staff')
                                     <li class="nav-item">

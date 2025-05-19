@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Car;
 use App\Models\Branch;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -90,12 +90,24 @@ class BookingController extends Controller
             }
         }
 
+        $branches = Car::whereIn('id', $carIds)->pluck('branch_id')->unique();
+
+        if ($branches->count() > 1) {
+            return back()->withErrors(['car_ids' => 'You can only book cars from the same branch.']);
+        }
+
+        $branchId = $branches->first();
+
+        $days = $start->diffInDays($end) + 1; // Include the end date
+        $totalPrice = Car::whereIn('id', $carIds)->sum('price_per_day') * $days;
         // Save booking
         $booking = Booking::create([
             'user_id' => Auth::id(),
+            'branch_id' => $branchId,
             'start_date' => $start,
             'end_date' => $end,
-            'status' => 'pending' // or whatever default you want
+            'status' => 'pending', // or whatever default you want
+            'total_price' => $totalPrice,
         ]);
 
         // Attach cars

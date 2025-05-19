@@ -44,7 +44,7 @@
                     <div class="form-check car-option" data-branch="{{ $car->branch_id }}">
                         <input class="form-check-input car-checkbox" type="checkbox" name="car_ids[]" value="{{ $car->id }}" id="car{{ $car->id }}">
                         <label class="form-check-label" for="car{{ $car->id }}">
-                            {{ $car->brand }} - {{ $car->model }} ({{ $car->transmission }}) - {{ $car->branch->name }}
+                            {{ $car->brand }} - {{ $car->model }} ({{ $car->transmission }}) - {{ $car->branch->name }}<br> RM {{ $car->price_per_day }} / day
                         </label>
                     </div>
                 @endforeach

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\Branch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class CarController extends Controller
 {
@@ -39,9 +40,19 @@ class CarController extends Controller
             'plate_number' => 'required|string|max:255|unique:cars,plate_number',
             'price_per_day' => 'required|numeric|min:0',
             'branch_id' => 'required|exists:branches,id',
+            'car_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Car::create($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('car_image')) {
+            $image = $request->file('car_image');
+            $imageName = time() . '_' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/cars'), $imageName);
+            $data['car_image'] = $imageName;
+        }
+
+        Car::create($data);
 
         return redirect()->back()->with('success', 'Car added successfully.');
     }
@@ -51,6 +62,37 @@ class CarController extends Controller
     public function show(Car $car)
     {
         //
+    }
+
+    public function browse(Request $request)
+    {
+        $query = Car::with('branch');
+
+        if ($request->filled('branch_id')) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->filled('car_type')) {
+            $query->where('type', $request->car_type); // assuming column name = 'type'
+        }
+
+        if ($request->filled('transmission')) {
+            $query->where('transmission', $request->transmission);
+        }
+
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+    // Optionally filter available by checking no booking conflict (skipped here)
+
+        $cars = $query->get();
+        $branches = Branch::all();
+        $brands = Car::select('brand')->distinct()->pluck('brand');
+        $types = Car::select('type')->distinct()->pluck('type');
+        $transmissions = Car::select('transmission')->distinct()->pluck('transmission');
+
+        return view('cars.browse', compact('cars', 'branches', 'brands', 'types', 'transmissions'));
     }
 
     /**
@@ -75,9 +117,20 @@ class CarController extends Controller
             'plate_number' => 'required|string|max:255|unique:cars,plate_number,' . $car->id,
             'price_per_day' => 'required|numeric|min:0',
             'branch_id' => 'required|exists:branches,id',
+            'car_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $car->update($request->all());
+        $data = $request->all();
+
+        if($request->hasFile('car_image')){
+            $image = $request->file('car_image');
+            $imageName = time() . '_' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/cars'), $imageName);
+            $data['car_image'] = $imageName;
+        } else {
+            unset($data['car_image']);
+        }
+        $car->update($data);
 
         return redirect()->route('cars.manage')->with('success', 'Car updated successfully.');
     }

@@ -18,6 +18,7 @@ class Car extends Model
         'plate_number',
         'price_per_day',
         'is_available',
+        'car_image',
     ];
 
     public function branch()
@@ -26,6 +27,6 @@ class Car extends Model
     }
     public function bookings()
     {
-        return $this->belongsToMany(Booking::class)->withTimestamps();
+        return $this->belongsToMany(Booking::class, 'booking_car')->withTimestamps();
     }
 }
