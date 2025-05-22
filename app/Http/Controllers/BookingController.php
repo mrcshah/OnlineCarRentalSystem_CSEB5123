@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Car;
 use App\Models\Branch;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -28,12 +28,17 @@ class BookingController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $branches = Branch::all();
         $cars = Car::with('branch')->get();
 
-        return view('bookings.create', compact('branches', 'cars'));
+        $selectedCarId = $request->car_id;
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $branchId = $request->branch_id;
+
+        return view('bookings.create', compact('branches', 'cars', 'selectedCarId', 'startDate', 'endDate', 'branchId'));
     }
 
     /**
@@ -41,6 +46,11 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        $data = session('booking_data');
+        if (!$data) {
+            return redirect()->route('bookings.create')->with('error', 'No booking data found.');
+        }
+
         $request->validate([
             'start_date' => 'required|date|after_or_equal:'.Carbon::now()->addDays(2)->toDateString(),
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -91,32 +101,76 @@ class BookingController extends Controller
             }
         }
 
-        $days = $start->diffInDays($end);
-        $totalPrice = 0;
+        $branches = Car::whereIn('id', $carIds)->pluck('branch_id')->unique();
 
-        foreach ($carIds as $carId) {
-            $car = Car::find($carId);
-            $totalPrice += $car->price_per_day * $days;
+        if ($branches->count() > 1) {
+            return back()->withErrors(['car_ids' => 'You can only book cars from the same branch.']);
         }
 
+        $branchId = $branches->first();
+
+        $days = $start->diffInDays($end) + 1; // Include the end date
+        $totalPrice = Car::whereIn('id', $carIds)->sum('price_per_day') * $days;
         // Save booking
         $booking = Booking::create([
             'user_id' => Auth::id(),
-            'branch_id' => $request->branch_id,
+            'branch_id' => $branchId,
             'start_date' => $start,
             'end_date' => $end,
-            'status' => 'pending',
-            'total_price' => $totalPrice
+            'status' => 'pending', // or whatever default you want
+            'total_price' => $totalPrice,
         ]);
         // Attach cars
         $booking->cars()->attach($carIds);
-
-        return redirect('/bookings')->with('success', 'Booking created successfully and pending approval.');
+        session()->forget('booking_data'); // clear session
+        return redirect()->route('bookings.index')->with('success', 'Booking submitted!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'branch_id' => 'required|exists:branches,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'car_ids' => 'required|array|max:2',
+            'car_ids.*' => 'exists:cars,id'
+        ]);
+
+        // Save data to session
+        session([
+            'booking_data' => $request->all()
+        ]);
+
+        return redirect()->route('bookings.confirm.view');
+    }
+    
+    public function showConfirmation()
+    {
+        $data = session('booking_data');
+
+        if (!$data) {
+            return redirect()->route('bookings.create')->with('error', 'No booking data found.');
+        }
+
+        $cars = Car::whereIn('id', $data['car_ids'])->get();
+
+        // Calculate total days and total price
+        $start = \Carbon\Carbon::parse($data['start_date']);
+        $end = \Carbon\Carbon::parse($data['end_date']);
+        $days = $start->diffInDays($end) + 1;
+
+        $total = $cars->sum(function ($car) use ($days) {
+            return $car->price_per_day * $days;
+        });
+
+        return view('bookings.confirm', [
+            'cars' => $cars,
+            'data' => $data,
+            'days' => $days,
+            'total' => $total,
+        ]);
+    }
+    
     public function show(Booking $booking)
     {
         //

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Booking extends Model
 {
@@ -12,20 +11,22 @@ class Booking extends Model
         'branch_id',
         'start_date',
         'end_date',
-        'status',
         'total_price',
+        'status',
     ];
-    public function cars(): BelongsToMany
+
+    public function cars()
     {
-        return $this->belongsToMany(Car::class, 'booking_car');
+        return $this->belongsToMany(Car::class)->withTimestamps();
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
-
 }

@@ -4,7 +4,7 @@
 <div class="container">
     <h3>Edit Car</h3>
 
-    <form action="{{ route('cars.update', $car->id) }}" method="POST">
+    <form action="{{ route('cars.update', $car->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -39,6 +39,14 @@
         <div class="mb-3">
             <label>Plate Number</label>
             <input type="text" name="plate_number" value="{{ old('plate_number', $car->plate_number) }}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="car_image" class="form-label">Car Image</label>
+            <input type="file" name="car_image" id="car_image" class="form-control">
+            @if($car->image)
+                <img src="{{ asset('storage/' . $car->image) }}" alt="Car Image" class="mt-2" style="max-width: 200px;">
+            @endif
         </div>
 
         <div class="mb-3">

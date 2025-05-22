@@ -27,6 +27,6 @@ class Car extends Model
     }
     public function bookings()
     {
-        return $this->belongsToMany(Booking::class)->withTimestamps();
+        return $this->belongsToMany(Booking::class, 'booking_car')->withTimestamps();
     }
 }

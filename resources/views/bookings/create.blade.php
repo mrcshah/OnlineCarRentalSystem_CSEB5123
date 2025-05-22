@@ -22,19 +22,23 @@
             <select name="branch_id" id="branch_id" class="form-control" required>
                 <option value="">-- Select Branch --</option>
                 @foreach ($branches as $branch)
-                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                    <option value="{{ $branch->id }}" {{ old('branch_id', $prefill['branch_id'] ?? '') == $branch->id ? 'selected' : '' }}>
+                        {{ $branch->name }}
+                    </option>
                 @endforeach
             </select>
         </div>
 
         <div class="mb-3">
             <label for="start_date" class="form-label">Rental Start Date</label>
-            <input type="date" name="start_date" class="form-control" required>
+            <input type="date" name="start_date" class="form-control" required
+                value="{{ old('start_date', $prefill['start_date'] ?? '') }}">
         </div>
 
         <div class="mb-3">
             <label for="end_date" class="form-label">Rental End Date</label>
-            <input type="date" name="end_date" class="form-control" required>
+            <input type="date" name="end_date" class="form-control" required
+                value="{{ old('end_date', $prefill['end_date'] ?? '') }}">
         </div>
 
         <div class="mb-3">
@@ -42,9 +46,10 @@
             <div id="car-list">
                 @foreach ($cars as $car)
                     <div class="form-check car-option" data-branch="{{ $car->branch_id }}">
-                        <input class="form-check-input car-checkbox" type="checkbox" name="car_ids[]" value="{{ $car->id }}" id="car{{ $car->id }}">
+                        <input class="form-check-input car-checkbox" type="checkbox" name="car_ids[]" value="{{ $car->id }}" id="car{{ $car->id }}"
+                            {{ (old('car_ids') && in_array($car->id, old('car_ids'))) || (isset($selectedCarId) && $selectedCarId == $car->id) ? 'checked' : '' }}>
                         <label class="form-check-label" for="car{{ $car->id }}">
-                            {{ $car->brand }} - {{ $car->model }} ({{ $car->transmission }}) - {{ $car->branch->name }}
+                            {{ $car->brand }} - {{ $car->model }} ({{ $car->transmission }}) - {{ $car->branch->name }}<br> RM {{ $car->price_per_day }} / day
                         </label>
                     </div>
                 @endforeach

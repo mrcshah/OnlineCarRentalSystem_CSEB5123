@@ -9,5 +9,23 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'location'];
+    protected $fillable = ['name', 'location', 'code', 'owner_id'];
+
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+    public function staff()
+    {
+        return $this->belongsToMany(User::class, 'branch_user');
+    }
 }
