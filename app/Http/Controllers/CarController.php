@@ -47,7 +47,7 @@ class CarController extends Controller
 
         if ($request->hasFile('car_image')) {
             $image = $request->file('car_image');
-            $imageName = time() . '_' . $image->getClientOriginalExtension();
+            $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images/cars'), $imageName);
             $data['car_image'] = $imageName;
         }
@@ -124,7 +124,7 @@ class CarController extends Controller
 
         if($request->hasFile('car_image')){
             $image = $request->file('car_image');
-            $imageName = time() . '_' . $image->getClientOriginalExtension();
+            $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images/cars'), $imageName);
             $data['car_image'] = $imageName;
         } else {
