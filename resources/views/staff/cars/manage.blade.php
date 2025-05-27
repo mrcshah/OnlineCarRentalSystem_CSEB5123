@@ -12,7 +12,7 @@
     <div class="card mb-4">
         <div class="card-header">Add New Car</div>
         <div class="card-body">
-            <form action="{{ url('staff/cars') }}" method="POST">
+            <form action="{{ route('cars.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                     <div class="mb-3">
@@ -78,7 +78,6 @@
                 </form>
             </div>
         </div>
-    @endif
 
     <!-- Car List -->
     <h4>Existing Cars</h4>
@@ -93,7 +92,6 @@
                 <th>Plate Number</th>
                 <th>Car Image</th>
                 <th>Branch</th>
-                <th>Car Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -118,13 +116,6 @@
                     @endif
                 </td>
                 <td>{{ $car->branch->name ?? 'N/A' }}</td>
-                <td>
-                    @if($car->car_image)
-                        <img src="{{ asset('storage/' . $car->car_image) }}" alt="Car Image" style="width: 100px; height: auto;">
-                    @else
-                        No Image
-                    @endif
-                </td>
                 <td>
                     @if($canEdit)
                         <a href="{{ route('cars.edit', $car->id) }}" class="btn btn-sm btn-primary">Edit</a>

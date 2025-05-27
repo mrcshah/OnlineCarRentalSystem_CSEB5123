@@ -46,10 +46,10 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        $data = session('booking_data');
+        /**$data = session('booking_data');
         if (!$data) {
             return redirect()->route('bookings.create')->with('error', 'No booking data found.');
-        }
+        }*/
 
         $request->validate([
             'start_date' => 'required|date|after_or_equal:'.Carbon::now()->addDays(2)->toDateString(),
@@ -122,7 +122,7 @@ class BookingController extends Controller
         ]);
         // Attach cars
         $booking->cars()->attach($carIds);
-        session()->forget('booking_data'); // clear session
+        //session()->forget('booking_data'); // clear session
         return redirect()->route('bookings.index')->with('success', 'Booking submitted!');
     }
 

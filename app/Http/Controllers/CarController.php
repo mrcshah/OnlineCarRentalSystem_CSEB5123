@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 
 class CarController extends Controller
 {
@@ -44,7 +45,10 @@ public function store(Request $request)
     ]);
 
     if ($request->hasFile('car_image')) {
-        $validated['car_image'] = $request->file('car_image')->store('images/cars', 'public');
+        $image = $request->file('car_image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('images/cars'), $imageName);
+        $validated['car_image'] = $imageName;
     }
 
     Car::create($validated);
@@ -60,7 +64,7 @@ public function store(Request $request)
         //
     }
 
-    public function browse(Request $request)
+    public function staffBrowse(Request $request)
     {
         $query = Car::with('branch');
 
@@ -116,12 +120,6 @@ public function store(Request $request)
             'car_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-<<<<<<< HEAD
-        if ($request->hasFile('car_image')) {
-            if ($car->car_image && Storage::disk('public')->exists($car->car_image)) {
-                Storage::disk('public')->delete($car->car_image);
-            }
-=======
         $data = $request->all();
 
         if($request->hasFile('car_image')){
@@ -133,13 +131,6 @@ public function store(Request $request)
             unset($data['car_image']);
         }
         $car->update($data);
->>>>>>> dede02b53ae960353352dab1562b7c21ff90c044
-
-            $path = $request->file('car_image')->store('images/cars', 'public');
-            $validate['car_image'] = $path;
-        }
-
-        $car->update($validate);
 
         return redirect()->back()->with('success', 'Car updated successfully.');
     }
@@ -168,11 +159,20 @@ public function store(Request $request)
         }
 
         $cars = $query->with('branch')->get();
-        return view('customer.cars.browse', compact('cars'));
+        $branches = Branch::all();
+        $brands = Car::select('brand')->distinct()->pluck('brand');
+        return view('cars.browse', compact('cars', 'branches', 'brands'));
     }
 
     public function destroy(Car $car)
     {
+        if ($car->car_image) {
+            $imagePath = public_path('images/cars/' . $car->car_image);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
+        }
+
         $car->delete();
         return redirect()->route('cars.manage')->with('success', 'Car deleted successfully.');
     }

@@ -42,11 +42,17 @@
         </div>
 
         <div class="mb-3">
-            <label for="car_image" class="form-label">Car Image</label>
-            <input type="file" name="car_image" id="car_image" class="form-control">
-            @if($car->image)
-                <img src="{{ asset('storage/' . $car->image) }}" alt="Car Image" class="mt-2" style="max-width: 200px;">
+            <label class="form-label">Current Image:</label><br>
+            @if($car->car_image)
+                <img src="{{ asset('images/cars/' . $car->car_image) }}" alt="Car Image" width="200">
+            @else
+                <p>No image uploaded.</p>
             @endif
+        </div>
+
+        <div class="mb-3">
+            <label for="car_image" class="form-label">Change Image</label>
+            <input type="file" name="car_image" id="car_image" class="form-control">
         </div>
 
         <div class="mb-3">
@@ -60,22 +66,14 @@
             </select>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Current Image:</label><br>
-            @if($car->car_image)
-                <img src="{{ asset('storage/' . $car->car_image) }}" width="150">
-            @else
-                <p>No image uploaded.</p>
-            @endif
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Change Image</label>
-            <input type="file" name="car_image" class="form-control">
-        </div>
-
         <button class="btn btn-success">Update Car</button>
         <a href="{{ route('cars.manage') }}" class="btn btn-secondary">Back</a>
     </form>
+    <form action="{{ route('cars.destroy', $car->id) }}" method="POST"
+        onsubmit="return confirm('Are you sure you want to delete this car? This action cannot be undone.');"
+        style="display:inline-block; margin-left: 10px;">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Delete Car</button>
 </div>
 @endsection
